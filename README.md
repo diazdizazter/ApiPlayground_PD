@@ -2,7 +2,7 @@
 
 A hands-on student project for learning how to fetch data from public APIs using JavaScript's `fetch()` API.
 
-Based on [WD-LL9-Student-API-Playground](https://github.com/ZachH90/WD-LL9-Student-API-Playground).
+Based on [GCA-Classroom/WD-LL9-Student-API-Playground](https://github.com/GCA-Classroom/WD-LL9-Student-API-Playground). All source files (`index.html`, `script.js`, `styles.css`, `.devcontainer/devcontainer.json`) are identical to that upstream repository.
 
 ## Getting Started
 
