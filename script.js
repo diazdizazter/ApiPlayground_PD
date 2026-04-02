@@ -17,6 +17,7 @@ const modalExplanation = document.getElementById("modalExplanation");
 const activeModalState = {
   item: null
 };
+const RUBRIC_WINDOW_DAYS = 9;
 
 const { min, max } = window.apodDateRange;
 function setInitialDateBounds() {
@@ -39,6 +40,30 @@ function toISODate(dateObj) {
   const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
   const dd = String(dateObj.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
+}
+
+function addDays(isoDate, dayOffset) {
+  const dateObj = new Date(`${isoDate}T00:00:00Z`);
+  dateObj.setUTCDate(dateObj.getUTCDate() + dayOffset);
+  return dateObj.toISOString().slice(0, 10);
+}
+
+function enforceRubricWindow(rawStart, rawEnd) {
+  const { start: clampedStart, end: clampedEnd } = window.apodDateRange.clampPair(rawStart, rawEnd);
+  const selectedStart = clampedStart <= clampedEnd ? clampedStart : clampedEnd;
+
+  let start = selectedStart;
+  let end = addDays(start, RUBRIC_WINDOW_DAYS - 1);
+
+  if (end > max) {
+    end = max;
+    start = addDays(end, -(RUBRIC_WINDOW_DAYS - 1));
+    if (start < min) {
+      start = min;
+    }
+  }
+
+  return { start, end };
 }
 
 function randomDateFromRange(minDate, maxDate) {
@@ -154,7 +179,9 @@ async function loadGallery() {
     return;
   }
 
-  const { start, end } = window.apodDateRange.clampPair(rawStart, rawEnd);
+  const { start, end } = enforceRubricWindow(rawStart, rawEnd);
+  startDateInput.value = start;
+  endDateInput.value = end;
 
   setStatus("Loading space photos...");
   gallery.innerHTML = "";
@@ -181,7 +208,7 @@ async function loadGallery() {
 
     const bonusItemsByDate = await loadBonusCards(max);
     bindCardClicks(bonusGrid, bonusItemsByDate);
-    setStatus(`Loaded ${items.length} gallery item(s) + 2 bonus APOD picks.`);
+    setStatus("");
   } catch (error) {
     console.error(error);
     setStatus("Could not load APOD data. Check your API key and try again.");
