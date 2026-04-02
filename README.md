@@ -1,5 +1,7 @@
 # NASA Space Explorer App
 
+ApiPlayground_PD - 2nd part LAC.
+
 Small frontend project built around NASA's Astronomy Picture of the Day (APOD) API. The app lets a user pick a date range, fetch the returned APOD entries, and browse them in a gallery with a modal detail view.
 
 ## What It Does
