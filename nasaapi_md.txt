@@ -1,0 +1,30 @@
+Project 7 | NASA Space Explorer App
+The team at NASA wants to spark curiosity about the universe—and they’ve asked for your help.
+Every day, NASA shares a new “Astronomy Picture of the Day” (APOD), featuring breathtaking images of galaxies, stars, planets, and beyond. Your task is to build a web app that connects to their public API and showcases these photos in a dynamic gallery based on a user-selected date range.
+You’ll use your AI-driven development skills to bring space exploration to life through real-time data from one of the most iconic organizations in the world!
+
+Project Steps Overview:
+Click this starter file link to launch your own Codespace.
+The provided files include a NASA logo, date inputs, a button, a placeholder for your gallery, and basic layout and styling to help you get started.
+It also includes built-in logic (in dateRange.js) to handle the valid APOD date range—from June 16, 1995 to today. No need to modify it.
+All your custom JavaScript should go in script.js. That’s where you’ll write the code that fetches data and displays your gallery.
+Get your NASA API Key
+You’ll need an API key to use the APOD endpoint.
+If you need a refresher, watch the video on API Docs & Keys.
+You can also use the DEMO_KEY for testing, but note that it has strict limits—so requesting your own key is recommended.
+Use AI to Help You Fetch Data
+Ask AI to guide you through connecting to NASA’s APOD API using the selected date range. 
+The API will return a set of objects that include image URLs, titles, dates, and explanations. You’ll use this data to populate the gallery.
+Display the Gallery
+Take the data returned from the API and generate a gallery of space images. For each item, display the image, along with its title and date.
+These gallery items should replace the placeholder and update whenever the user selects a new date range and clicks “Get Space Images.”
+Build a Modal View
+ When a user clicks a gallery item, open a modal window that shows:
+A larger version of the image
+The full title and date
+NASA’s “explanation” text for that photo
+Make sure the modal can be easily closed and is styled to match the rest of your app.
+Apply NASA Branding
+Reference NASA’s official brand guidelines or explore their web design system components to align your colors and fonts more closely with their branding.
+Show a Loading Message
+Before your gallery loads, display a short message that lets users know the images are on the way. Example: 🔄 Loading space photos…

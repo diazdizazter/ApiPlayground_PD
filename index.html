@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NASA Space Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+
+    <main class="app-shell">
+      <header class="hero">
+        <p class="eyebrow">Project 7 | NASA APOD</p>
+        <h1>Space Explorer Gallery</h1>
+        <p class="hero-copy">
+          Pick a date range, load the APOD gallery, and open any card for the full NASA explanation.
+        </p>
+      </header>
+
+      <section class="controls" aria-label="Date controls">
+        <div class="field-group">
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" />
+        </div>
+        <div class="field-group">
+          <label for="endDate">End Date</label>
+          <input type="date" id="endDate" />
+        </div>
+        <button id="getImagesBtn" type="button">Get Space Images</button>
+      </section>
+
+      <p id="statusMessage" class="status" role="status" aria-live="polite">Choose a date range and launch.</p>
+
+      <section class="bonus-panel" aria-label="Bonus APOD picks">
+        <h2>Bonus Mission</h2>
+        <p>Today’s APOD plus one random showcase pick, shown with the same card layout as the gallery.</p>
+        <div id="bonusGrid" class="bonus-grid"></div>
+      </section>
+
+      <section id="gallery" class="gallery" aria-label="Space image gallery">
+        <article class="placeholder-card">
+          <h3>Awaiting Liftoff</h3>
+          <p>Select dates and click the button to load NASA APOD images.</p>
+        </article>
+      </section>
+    </main>
+
+    <div id="imageModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <button class="modal-close" id="closeModalBtn" type="button" aria-label="Close modal">Close</button>
+        <img id="modalImage" alt="Expanded astronomy view" />
+        <h3 id="modalTitle"></h3>
+        <p id="modalMeta" class="modal-meta"></p>
+        <p id="modalExplanation" class="modal-explanation"></p>
+      </div>
+    </div>
+
+    <script src="dateRange.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
