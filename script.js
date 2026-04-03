@@ -66,13 +66,6 @@ function enforceRubricWindow(rawStart, rawEnd) {
   return { start, end };
 }
 
-function randomDateFromRange(minDate, maxDate) {
-  const start = new Date(minDate + "T00:00:00");
-  const end = new Date(maxDate + "T00:00:00");
-  const randomMs = start.getTime() + Math.random() * (end.getTime() - start.getTime());
-  return toISODate(new Date(randomMs));
-}
-
 async function fetchApod(params) {
   const query = new URLSearchParams({
     api_key: NASA_API_KEY,
@@ -160,33 +153,40 @@ function normalizeToArray(payload) {
   return Array.isArray(payload) ? payload : [payload];
 }
 
-async function pickRandomByType(excludeDate, mediaType, maxAttempts = 8) {
-  let fallback = null;
+function pickFromPool(randomPool, usedIndexes, excludeDate, mediaType) {
+  let fallbackIndex = -1;
 
-  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-    const randomDate = randomDateFromRange(min, max);
-    if (randomDate === excludeDate) {
+  for (let i = 0; i < randomPool.length; i += 1) {
+    if (usedIndexes.has(i)) {
       continue;
     }
 
-    const candidate = await fetchApod({ date: randomDate });
-    if (!fallback) {
-      fallback = candidate;
+    const candidate = randomPool[i];
+    const isSameDate = candidate.date === excludeDate;
+    if (fallbackIndex === -1 && !isSameDate) {
+      fallbackIndex = i;
     }
 
-    if (candidate.media_type === mediaType) {
+    if (!isSameDate && candidate.media_type === mediaType) {
+      usedIndexes.add(i);
       return candidate;
     }
   }
 
-  return fallback;
+  if (fallbackIndex >= 0) {
+    usedIndexes.add(fallbackIndex);
+    return randomPool[fallbackIndex];
+  }
+
+  return null;
 }
 
-async function buildGalleryPairs(items) {
+async function buildGalleryPairs(items, randomPool) {
   const cardLookup = {};
+  const usedRandomIndexes = new Set();
 
-  const rowMarkup = await Promise.all(items.map(async (item, index) => {
-    const randomMatch = await pickRandomByType(item.date, item.media_type);
+  const rowMarkup = items.map((item, index) => {
+    const randomMatch = pickFromPool(randomPool, usedRandomIndexes, item.date, item.media_type);
     const officialId = `official-${index}-${item.date}`;
     cardLookup[officialId] = item;
 
@@ -210,7 +210,7 @@ async function buildGalleryPairs(items) {
         </div>
       </section>
     `;
-  }));
+  });
 
   gallery.innerHTML = rowMarkup.join("");
   return cardLookup;
@@ -251,8 +251,12 @@ async function loadGallery() {
   gallery.innerHTML = "";
 
   try {
-    const rangePayload = await fetchApod({ start_date: start, end_date: end });
+    const [rangePayload, randomPayload] = await Promise.all([
+      fetchApod({ start_date: start, end_date: end }),
+      fetchApod({ count: 30 })
+    ]);
     const items = normalizeToArray(rangePayload).sort((a, b) => b.date.localeCompare(a.date));
+    const randomPool = normalizeToArray(randomPayload);
 
     if (!items.length) {
       renderFallback("No Results", "Try another date range.");
@@ -260,7 +264,7 @@ async function loadGallery() {
       return;
     }
 
-    const itemsLookup = await buildGalleryPairs(items);
+    const itemsLookup = await buildGalleryPairs(items, randomPool);
     bindCardClicks(gallery, itemsLookup);
     setStatus("");
   } catch (error) {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Diaz Dizazter Does NASA Solar Revolution Imagery</title>
+    <title>Impending Cosmic Communications</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -19,7 +19,7 @@
     <main class="app-shell">
       <header class="hero hero-layout">
         <div>
-          <p class="eyebrow"><a class="top-link" href="cosmic-communications.html">Diaz Dizazter</a></p>
+          <p class="eyebrow"><a class="top-link" href="index.html">Diaz Dizazter</a></p>
           <h1>Impending Cosmic Communications</h1>
           <p class="hero-copy">from the long past me:</p>
 
@@ -47,42 +47,6 @@
           </div>
         </aside>
       </header>
-
-      <section class="controls" aria-label="Date controls">
-        <div class="field-group">
-          <label for="startDate">Start Date</label>
-          <input type="date" id="startDate" />
-        </div>
-        <div class="field-group">
-          <label for="endDate">End Date</label>
-          <input type="date" id="endDate" />
-        </div>
-        <button id="getImagesBtn" type="button">Get Space Images</button>
-      </section>
-
-      <p id="statusMessage" class="status" role="status" aria-live="polite">Choose a date range and launch.</p>
-
-      <section id="gallery" class="gallery" aria-label="Space image gallery">
-        <article class="placeholder-card">
-          <h3>Awaiting Liftoff</h3>
-          <p>Select dates and click the button to load paired NASA APOD frames.</p>
-        </article>
-      </section>
     </main>
-
-    <div id="imageModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="modal-card">
-        <button class="modal-close" id="closeModalBtn" type="button" aria-label="Close modal">Close</button>
-        <img id="modalImage" alt="Expanded astronomy view" />
-        <h3 id="modalTitle"></h3>
-        <p id="modalMeta" class="modal-meta"></p>
-        <p id="modalMediaLink" class="modal-media-link"></p>
-        <p id="modalExplanation" class="modal-explanation"></p>
-      </div>
-    </div>
-
-    <script src="dateRange.js"></script>
-    <script src="config.local.js"></script>
-    <script src="script.js"></script>
   </body>
 </html>

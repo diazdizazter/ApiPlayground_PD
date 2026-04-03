@@ -18,13 +18,13 @@ Small frontend project built around NASA's Astronomy Picture of the Day (APOD) A
 ## Project Files
 
 - `index.html`: Main app structure, controls, gallery, logo frame, and modal.
+- `cosmic-communications.html`: Linked narrative page with matching visual style and logo frame.
 - `styles.css`: NASA-inspired visual styling and responsive layout.
 - `dateRange.js`: APOD date limits and safe date clamping helpers.
 - `script.js`: Fetch logic, 9-day pairing workflow, gallery rendering, and modal behavior.
 - `config.local.example.js`: Template for a local API key file.
 - `config.local.js`: Local-only API key file (ignored by git).
 - `README.md`: Project overview and run instructions.
-- `nasaapi_md.txt`: Original assignment brief and feature checklist.
 
 ## Assignment Notes
 
