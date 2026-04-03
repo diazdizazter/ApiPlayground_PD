@@ -26,11 +26,14 @@
           </p>
         </div>
 
-        <aside class="logo-rail" aria-label="Program and mission logos">
-          <img src="IMG/NASA_Worm_logo.svg" alt="NASA Worm logo" loading="lazy" />
-          <img src="IMG/500px-NASA_JPL_Meatball_Logo.webp.png" alt="NASA JPL Meatball logo" loading="lazy" />
-          <img src="IMG/EGSLogoTwitter.png" alt="Exploration Ground Systems logo" loading="lazy" />
-          <img src="IMG/Artemis_program_(original_with_wordmark).svg" alt="Artemis program logo" loading="lazy" />
+        <aside class="logo-frame" aria-label="Program and mission logos">
+          <p class="logo-frame-title">Mission Marks</p>
+          <div class="logo-rail">
+            <img class="logo-small" src="IMG/NASA_Worm_logo.svg" alt="NASA Worm logo" loading="lazy" />
+            <img class="logo-small" src="IMG/500px-NASA_JPL_Meatball_Logo.webp.png" alt="NASA JPL Meatball logo" loading="lazy" />
+            <img class="logo-small" src="IMG/EGSLogoTwitter.png" alt="Exploration Ground Systems logo" loading="lazy" />
+            <img src="IMG/Artemis_program_(original_with_wordmark).svg" alt="Artemis program logo" loading="lazy" />
+          </div>
         </aside>
       </header>
 
@@ -48,29 +51,10 @@
 
       <p id="statusMessage" class="status" role="status" aria-live="polite">Choose a date range and launch.</p>
 
-      <section class="bonus-panel" aria-label="Bonus APOD picks">
-        <h2>Bonus Mission</h2>
-        <p>Today’s APOD plus one random showcase pick, shown with the same card layout as the gallery.</p>
-        <div class="bonus-bars" aria-hidden="true">
-          <p>Official Daily Gallery</p>
-          <p>Kell's Gift Galleria</p>
-        </div>
-        <div id="bonusGrid" class="bonus-grid bonus-grid-dual">
-          <article class="placeholder-card">
-            <h3>Official Daily Gallery</h3>
-            <p>Today&rsquo;s NASA APOD appears here.</p>
-          </article>
-          <article class="placeholder-card">
-            <h3>Kell's Gift Galleria</h3>
-            <p>A random APOD from the same media type appears here.</p>
-          </article>
-        </div>
-      </section>
-
       <section id="gallery" class="gallery" aria-label="Space image gallery">
         <article class="placeholder-card">
           <h3>Awaiting Liftoff</h3>
-          <p>Select dates and click the button to load NASA APOD images.</p>
+          <p>Select dates and click the button to load paired NASA APOD frames.</p>
         </article>
       </section>
     </main>
@@ -81,11 +65,13 @@
         <img id="modalImage" alt="Expanded astronomy view" />
         <h3 id="modalTitle"></h3>
         <p id="modalMeta" class="modal-meta"></p>
+        <p id="modalMediaLink" class="modal-media-link"></p>
         <p id="modalExplanation" class="modal-explanation"></p>
       </div>
     </div>
 
     <script src="dateRange.js"></script>
+    <script src="config.local.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

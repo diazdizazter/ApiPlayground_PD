@@ -1,4 +1,4 @@
-const NASA_API_KEY = "DEMO_KEY";
+const NASA_API_KEY = window.NASA_API_KEY || "DEMO_KEY";
 const APOD_ENDPOINT = "https://api.nasa.gov/planetary/apod";
 
 const startDateInput = document.getElementById("startDate");
@@ -6,13 +6,13 @@ const endDateInput = document.getElementById("endDate");
 const getImagesBtn = document.getElementById("getImagesBtn");
 const statusMessage = document.getElementById("statusMessage");
 const gallery = document.getElementById("gallery");
-const bonusGrid = document.getElementById("bonusGrid");
 
 const imageModal = document.getElementById("imageModal");
 const closeModalBtn = document.getElementById("closeModalBtn");
 const modalImage = document.getElementById("modalImage");
 const modalTitle = document.getElementById("modalTitle");
 const modalMeta = document.getElementById("modalMeta");
+const modalMediaLink = document.getElementById("modalMediaLink");
 const modalExplanation = document.getElementById("modalExplanation");
 const activeModalState = {
   item: null
@@ -76,6 +76,7 @@ function randomDateFromRange(minDate, maxDate) {
 async function fetchApod(params) {
   const query = new URLSearchParams({
     api_key: NASA_API_KEY,
+    thumbs: "true",
     ...params
   });
   const response = await fetch(`${APOD_ENDPOINT}?${query.toString()}`);
@@ -87,15 +88,15 @@ async function fetchApod(params) {
   return response.json();
 }
 
-function cardTemplate(item, isBonus = false, badgeText = "") {
-  const containerClass = isBonus ? "bonus-item" : "gallery-item";
+function cardTemplate(item, cardId, badgeText = "") {
+  const containerClass = "gallery-item";
   const mediaHtml = item.media_type === "image"
     ? `<img src="${item.url}" alt="${item.title}" loading="lazy" />`
-    : `<div class="item-body"><p>This APOD entry is a ${item.media_type}. Open the detail view for more info.</p></div>`;
+    : `<img src="${item.thumbnail_url || item.url}" alt="${item.title} video thumbnail" loading="lazy" />`;
   const badgeHtml = badgeText ? `<span class="item-badge">${badgeText}</span>` : "";
 
   return `
-    <article class="${containerClass}" data-date="${item.date}">
+    <article class="${containerClass}" data-id="${cardId}">
       ${badgeHtml}
       ${mediaHtml}
       <div class="item-body">
@@ -106,11 +107,11 @@ function cardTemplate(item, isBonus = false, badgeText = "") {
   `;
 }
 
-function nonImageTemplate(item, isBonus = false, badgeText = "") {
-  const containerClass = isBonus ? "bonus-item" : "gallery-item";
+function nonImageTemplate(item, cardId, badgeText = "") {
+  const containerClass = "gallery-item";
   const badgeHtml = badgeText ? `<span class="item-badge">${badgeText}</span>` : "";
   return `
-    <article class="${containerClass}" data-date="${item.date}">
+    <article class="${containerClass}" data-id="${cardId}">
       ${badgeHtml}
       <div class="item-body">
         <h3 class="item-title">${item.title}</h3>
@@ -121,11 +122,11 @@ function nonImageTemplate(item, isBonus = false, badgeText = "") {
   `;
 }
 
-function buildCard(item, isBonus = false, badgeText = "") {
+function buildCard(item, cardId, badgeText = "") {
   if (item.media_type === "image") {
-    return cardTemplate(item, isBonus, badgeText);
+    return cardTemplate(item, cardId, badgeText);
   }
-  return nonImageTemplate(item, isBonus, badgeText);
+  return nonImageTemplate(item, cardId, badgeText);
 }
 
 function openModal(item) {
@@ -134,9 +135,11 @@ function openModal(item) {
   if (item.media_type === "image") {
     modalImage.src = item.hdurl || item.url;
     modalImage.style.display = "block";
+    modalMediaLink.innerHTML = "";
   } else {
     modalImage.removeAttribute("src");
     modalImage.style.display = "none";
+    modalMediaLink.innerHTML = `<a href="${item.url}" target="_blank" rel="noopener noreferrer">Open NASA video in a new tab</a>`;
   }
 
   modalTitle.textContent = item.title;
@@ -157,12 +160,12 @@ function normalizeToArray(payload) {
   return Array.isArray(payload) ? payload : [payload];
 }
 
-async function pickRandomByType(todayDate, mediaType, maxAttempts = 8) {
+async function pickRandomByType(excludeDate, mediaType, maxAttempts = 8) {
   let fallback = null;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const randomDate = randomDateFromRange(min, max);
-    if (randomDate === todayDate) {
+    if (randomDate === excludeDate) {
       continue;
     }
 
@@ -179,32 +182,48 @@ async function pickRandomByType(todayDate, mediaType, maxAttempts = 8) {
   return fallback;
 }
 
-async function loadBonusCards(todayDate) {
-  const todayData = await fetchApod({ date: todayDate });
-  const randomData = await pickRandomByType(todayDate, todayData.media_type);
+async function buildGalleryPairs(items) {
+  const cardLookup = {};
 
-  const officialMarkup = buildCard(todayData, true, "Official");
-  const randomMarkup = randomData
-    ? buildCard(randomData, true, "Kell's Gift Galleria")
-    : `<article class="placeholder-card"><h3>Kell's Gift Galleria</h3><p>No random APOD was available.</p></article>`;
+  const rowMarkup = await Promise.all(items.map(async (item, index) => {
+    const randomMatch = await pickRandomByType(item.date, item.media_type);
+    const officialId = `official-${index}-${item.date}`;
+    cardLookup[officialId] = item;
 
-  bonusGrid.innerHTML = officialMarkup + randomMarkup;
+    const randomId = randomMatch ? `random-${index}-${randomMatch.date}` : "";
+    if (randomMatch) {
+      cardLookup[randomId] = randomMatch;
+    }
 
-  const byDate = { [todayData.date]: todayData };
-  if (randomData) {
-    byDate[randomData.date] = randomData;
-  }
-  return byDate;
+    const officialCard = buildCard(item, officialId, "Official Daily Gallery");
+    const randomCard = randomMatch
+      ? buildCard(randomMatch, randomId, "Kell's Gift Galleria")
+      : `<article class="placeholder-card"><h3>Kell's Gift Galleria</h3><p>No random APOD was available for this frame.</p></article>`;
+
+    return `
+      <section class="gallery-row" aria-label="APOD paired frame for ${item.date}">
+        <div>
+          ${officialCard}
+        </div>
+        <div>
+          ${randomCard}
+        </div>
+      </section>
+    `;
+  }));
+
+  gallery.innerHTML = rowMarkup.join("");
+  return cardLookup;
 }
 
 function bindCardClicks(container, lookup) {
   container.onclick = (event) => {
-    const card = event.target.closest("[data-date]");
+    const card = event.target.closest("[data-id]");
     if (!card || !container.contains(card)) {
       return;
     }
 
-    const item = lookup[card.dataset.date];
+    const item = lookup[card.dataset.id];
     if (item) {
       openModal(item);
     }
@@ -230,7 +249,6 @@ async function loadGallery() {
 
   setStatus("Loading space photos...");
   gallery.innerHTML = "";
-  bonusGrid.innerHTML = "";
 
   try {
     const rangePayload = await fetchApod({ start_date: start, end_date: end });
@@ -242,17 +260,8 @@ async function loadGallery() {
       return;
     }
 
-    gallery.innerHTML = items.map((item) => buildCard(item)).join("");
-
-    const itemsByDate = {};
-    items.forEach((item) => {
-      itemsByDate[item.date] = item;
-    });
-
-    bindCardClicks(gallery, itemsByDate);
-
-    const bonusItemsByDate = await loadBonusCards(max);
-    bindCardClicks(bonusGrid, bonusItemsByDate);
+    const itemsLookup = await buildGalleryPairs(items);
+    bindCardClicks(gallery, itemsLookup);
     setStatus("");
   } catch (error) {
     console.error(error);
