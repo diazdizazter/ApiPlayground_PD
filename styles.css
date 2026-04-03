@@ -71,6 +71,7 @@ body {
   font-size: clamp(2.2rem, 5vw, 3.5rem);
   margin: 0.3rem 0;
   line-height: 1.05;
+  text-wrap: balance;
 }
 
 .eyebrow {
@@ -85,6 +86,7 @@ body {
   max-width: 68ch;
   margin-top: 0;
   opacity: 0.9;
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
 }
 
 .top-link {
@@ -103,8 +105,9 @@ body {
   border: 1px solid var(--border);
   border-radius: 0.85rem;
   background: rgba(10, 20, 54, 0.72);
-  padding: 0.85rem;
+  padding: 0.95rem;
   line-height: 1.55;
+  font-size: 0.98rem;
 }
 
 .memory-note p {
@@ -163,6 +166,10 @@ body {
   border-radius: 1rem;
   padding: 1rem;
   box-shadow: var(--shadow);
+}
+
+#getImagesBtn {
+  width: 100%;
 }
 
 .field-group {
@@ -409,26 +416,66 @@ button:focus-visible {
 
 @media (max-width: 700px) {
   body {
-    padding: 0.75rem;
+    padding: 0.65rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.7rem, 9vw, 2.3rem);
+    margin: 0.25rem 0 0.45rem;
+  }
+
+  .eyebrow {
+    font-size: 0.74rem;
+    letter-spacing: 0.06em;
+  }
+
+  .hero-copy {
+    font-size: 0.98rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .memory-note {
+    padding: 0.8rem;
+    font-size: 0.93rem;
+    line-height: 1.5;
+  }
+
+  .controls {
+    gap: 0.65rem;
+    padding: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  input[type="date"],
+  button {
+    height: 42px;
   }
 
   .hero-layout {
     grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .logo-frame {
+    padding: 0.65rem;
   }
 
   .logo-rail {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     justify-content: center;
+    gap: 0.55rem;
   }
 
   .logo-rail img {
-    width: 45%;
-    max-height: 88px;
+    width: 100%;
+    max-height: 90px;
+    padding: 0.35rem;
   }
 
   .logo-rail .logo-small {
-    width: 30%;
+    width: 67%;
+    justify-self: center;
   }
 
   .gallery-row,
@@ -438,6 +485,10 @@ button:focus-visible {
 
   .gallery-item img {
     height: 165px;
+  }
+
+  .status {
+    font-size: 0.95rem;
   }
 }
 
