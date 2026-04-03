@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NASA Space Explorer</title>
+    <title>Diaz Dizazter Does NASA Solar Revolution Imagery</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,12 +17,21 @@
     <div class="bg-orb bg-orb-b"></div>
 
     <main class="app-shell">
-      <header class="hero">
-        <p class="eyebrow">Project 7 | NASA APOD</p>
-        <h1>Space Explorer Gallery</h1>
-        <p class="hero-copy">
-          Pick a date range, load the APOD gallery, and open any card for the full NASA explanation.
-        </p>
+      <header class="hero hero-layout">
+        <div>
+          <p class="eyebrow">Diaz Dizazter Does NASA Solar Revolution Imagery</p>
+          <h1>Space Explorer Gallery</h1>
+          <p class="hero-copy">
+            Find a Destination for your Time Travel Pictorial Gallery Excursion :: Pick a card, pick any card for the full NASA explanation.
+          </p>
+        </div>
+
+        <aside class="logo-rail" aria-label="Program and mission logos">
+          <img src="IMG/NASA_Worm_logo.svg" alt="NASA Worm logo" loading="lazy" />
+          <img src="IMG/500px-NASA_JPL_Meatball_Logo.webp.png" alt="NASA JPL Meatball logo" loading="lazy" />
+          <img src="IMG/EGSLogoTwitter.png" alt="Exploration Ground Systems logo" loading="lazy" />
+          <img src="IMG/Artemis_program_(original_with_wordmark).svg" alt="Artemis program logo" loading="lazy" />
+        </aside>
       </header>
 
       <section class="controls" aria-label="Date controls">
@@ -42,7 +51,20 @@
       <section class="bonus-panel" aria-label="Bonus APOD picks">
         <h2>Bonus Mission</h2>
         <p>Today’s APOD plus one random showcase pick, shown with the same card layout as the gallery.</p>
-        <div id="bonusGrid" class="bonus-grid"></div>
+        <div class="bonus-bars" aria-hidden="true">
+          <p>Official Daily Gallery</p>
+          <p>Kell's Gift Galleria</p>
+        </div>
+        <div id="bonusGrid" class="bonus-grid bonus-grid-dual">
+          <article class="placeholder-card">
+            <h3>Official Daily Gallery</h3>
+            <p>Today&rsquo;s NASA APOD appears here.</p>
+          </article>
+          <article class="placeholder-card">
+            <h3>Kell's Gift Galleria</h3>
+            <p>A random APOD from the same media type appears here.</p>
+          </article>
+        </div>
       </section>
 
       <section id="gallery" class="gallery" aria-label="Space image gallery">

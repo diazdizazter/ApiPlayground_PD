@@ -106,6 +106,28 @@ function cardTemplate(item, isBonus = false, badgeText = "") {
   `;
 }
 
+function nonImageTemplate(item, isBonus = false, badgeText = "") {
+  const containerClass = isBonus ? "bonus-item" : "gallery-item";
+  const badgeHtml = badgeText ? `<span class="item-badge">${badgeText}</span>` : "";
+  return `
+    <article class="${containerClass}" data-date="${item.date}">
+      ${badgeHtml}
+      <div class="item-body">
+        <h3 class="item-title">${item.title}</h3>
+        <p class="item-date">${item.date}</p>
+        <p>This APOD entry is a ${item.media_type}. Open the detail view for more info.</p>
+      </div>
+    </article>
+  `;
+}
+
+function buildCard(item, isBonus = false, badgeText = "") {
+  if (item.media_type === "image") {
+    return cardTemplate(item, isBonus, badgeText);
+  }
+  return nonImageTemplate(item, isBonus, badgeText);
+}
+
 function openModal(item) {
   activeModalState.item = item;
 
@@ -135,25 +157,48 @@ function normalizeToArray(payload) {
   return Array.isArray(payload) ? payload : [payload];
 }
 
+async function pickRandomByType(todayDate, mediaType, maxAttempts = 8) {
+  let fallback = null;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const randomDate = randomDateFromRange(min, max);
+    if (randomDate === todayDate) {
+      continue;
+    }
+
+    const candidate = await fetchApod({ date: randomDate });
+    if (!fallback) {
+      fallback = candidate;
+    }
+
+    if (candidate.media_type === mediaType) {
+      return candidate;
+    }
+  }
+
+  return fallback;
+}
+
 async function loadBonusCards(todayDate) {
-  const randomDate = randomDateFromRange(min, max);
-  const safeRandomDate = randomDate === todayDate ? min : randomDate;
+  const todayData = await fetchApod({ date: todayDate });
+  const randomData = await pickRandomByType(todayDate, todayData.media_type);
 
-  const [todayData, randomData] = await Promise.all([
-    fetchApod({ date: todayDate }),
-    fetchApod({ date: safeRandomDate })
-  ]);
+  const officialMarkup = buildCard(todayData, true, "Official");
+  const randomMarkup = randomData
+    ? buildCard(randomData, true, "Kell's Gift Galleria")
+    : `<article class="placeholder-card"><h3>Kell's Gift Galleria</h3><p>No random APOD was available.</p></article>`;
 
-  bonusGrid.innerHTML = cardTemplate(todayData, true, "Today") + cardTemplate(randomData, true, "Showcase Pick");
+  bonusGrid.innerHTML = officialMarkup + randomMarkup;
 
-  return {
-    [todayData.date]: todayData,
-    [randomData.date]: randomData
-  };
+  const byDate = { [todayData.date]: todayData };
+  if (randomData) {
+    byDate[randomData.date] = randomData;
+  }
+  return byDate;
 }
 
 function bindCardClicks(container, lookup) {
-  container.addEventListener("click", (event) => {
+  container.onclick = (event) => {
     const card = event.target.closest("[data-date]");
     if (!card || !container.contains(card)) {
       return;
@@ -163,7 +208,7 @@ function bindCardClicks(container, lookup) {
     if (item) {
       openModal(item);
     }
-  });
+  };
 }
 
 function renderFallback(messageTitle, messageBody) {
@@ -197,7 +242,7 @@ async function loadGallery() {
       return;
     }
 
-    gallery.innerHTML = items.map((item) => cardTemplate(item)).join("");
+    gallery.innerHTML = items.map((item) => buildCard(item)).join("");
 
     const itemsByDate = {};
     items.forEach((item) => {
