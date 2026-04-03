@@ -118,6 +118,32 @@ body {
   margin-top: 0.75rem;
 }
 
+.cosmic-figure {
+  margin: 1rem auto 0;
+  padding: 0.85rem;
+  max-width: 680px;
+  border: 1px solid var(--border);
+  border-radius: 0.95rem;
+  background: rgba(10, 20, 54, 0.72);
+}
+
+.cosmic-figure a {
+  display: block;
+}
+
+.cosmic-figure img {
+  width: 100%;
+  display: block;
+  border-radius: 0.7rem;
+  border: 1px solid rgba(255, 227, 162, 0.24);
+}
+
+.cosmic-figure figcaption {
+  margin-top: 0.55rem;
+  font-size: 0.9rem;
+  color: var(--accent-soft);
+}
+
 .logo-frame {
   border: 1px solid var(--border);
   border-radius: 0.95rem;
