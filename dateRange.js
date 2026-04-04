@@ -1,11 +1,10 @@
 (function () {
   const APOD_MIN = "1995-06-16";
 
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, "0");
-  const dd = String(today.getDate()).padStart(2, "0");
-  const APOD_MAX = `${yyyy}-${mm}-${dd}`;
+  // Use UTC and step back one day to avoid requesting an APOD date not yet published.
+  const safeUtcDate = new Date();
+  safeUtcDate.setUTCDate(safeUtcDate.getUTCDate() - 1);
+  const APOD_MAX = safeUtcDate.toISOString().slice(0, 10);
 
   window.apodDateRange = {
     min: APOD_MIN,
