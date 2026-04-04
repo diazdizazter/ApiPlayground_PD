@@ -33,6 +33,11 @@ function setStatus(message) {
   statusMessage.textContent = message;
 }
 
+function formatDotDate(isoDate) {
+  const [year, month, day] = isoDate.split("-");
+  return `${Number(month)}.${Number(day)}.${year}`;
+}
+
 setInitialDateBounds();
 
 function toISODate(dateObj) {
@@ -94,7 +99,7 @@ function cardTemplate(item, cardId, badgeText = "") {
       ${mediaHtml}
       <div class="item-body">
         <h3 class="item-title">${item.title}</h3>
-        <p class="item-date">${item.date}</p>
+        <p class="item-date">${item.dateLabel}: ${formatDotDate(item.date)}</p>
       </div>
     </article>
   `;
@@ -108,7 +113,7 @@ function nonImageTemplate(item, cardId, badgeText = "") {
       ${badgeHtml}
       <div class="item-body">
         <h3 class="item-title">${item.title}</h3>
-        <p class="item-date">${item.date}</p>
+        <p class="item-date">${item.dateLabel}: ${formatDotDate(item.date)}</p>
         <p>This APOD entry is a ${item.media_type}. Open the detail view for more info.</p>
       </div>
     </article>
@@ -136,7 +141,7 @@ function openModal(item) {
   }
 
   modalTitle.textContent = item.title;
-  modalMeta.textContent = `${item.date} | ${item.media_type.toUpperCase()}`;
+  modalMeta.textContent = `${formatDotDate(item.date)} . ${item.media_type.toUpperCase()}`;
   modalExplanation.textContent = item.explanation || "No explanation provided.";
 
   imageModal.classList.add("open");
@@ -188,16 +193,23 @@ async function buildGalleryPairs(items, randomPool) {
   const rowMarkup = items.map((item, index) => {
     const randomMatch = pickFromPool(randomPool, usedRandomIndexes, item.date, item.media_type);
     const officialId = `official-${index}-${item.date}`;
-    cardLookup[officialId] = item;
+    const officialItem = {
+      ...item,
+      dateLabel: "NASA: Solar Revolution Imagery"
+    };
+    cardLookup[officialId] = officialItem;
 
     const randomId = randomMatch ? `random-${index}-${randomMatch.date}` : "";
     if (randomMatch) {
-      cardLookup[randomId] = randomMatch;
+      cardLookup[randomId] = {
+        ...randomMatch,
+        dateLabel: "Kell's Gift Galleria"
+      };
     }
 
-    const officialCard = buildCard(item, officialId, "Official Daily Gallery");
+    const officialCard = buildCard(officialItem, officialId, "Official Daily Gallery");
     const randomCard = randomMatch
-      ? buildCard(randomMatch, randomId, "Kell's Gift Galleria")
+      ? buildCard(cardLookup[randomId], randomId, "Kell's Gift Galleria")
       : `<article class="placeholder-card"><h3>Kell's Gift Galleria</h3><p>No random APOD was available for this frame.</p></article>`;
 
     return `
@@ -260,7 +272,7 @@ async function loadGallery() {
 
     if (!items.length) {
       renderFallback("No Results", "Try another date range.");
-      setStatus("No APOD results for that range.");
+      setStatus("Out of Solar Revolution Travel Range");
       return;
     }
 
